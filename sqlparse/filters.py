@@ -300,7 +300,7 @@ class ReindentFilter:
 
     def _split_kwds(self, tlist):
         split_words = ('FROM', 'STRAIGHT_JOIN$', 'JOIN$', 'AND', 'OR', 'ON', 
-                       'GROUP', 'ORDER', 'UNION', 'VALUES', 'LEFT',
+                       'GROUP', 'ORDER', 'UNION', 'VALUES', 'LEFT', 'HAVING', 
                        'SET', 'BETWEEN', 'EXCEPT')
 
         def _next_token(i):
