@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import re
 
 from os.path import abspath, join
@@ -271,6 +270,7 @@ class ReindentFilter:
         self._curr_stmt = None
         self._last_stmt = None
 
+
     def _flatten_up_to_token(self, token):
         """Yields all tokens up to token plus the next one."""
         # helper for _get_offset
@@ -299,7 +299,7 @@ class ReindentFilter:
         return sql.Token(T.Whitespace, ws)
 
     def _split_kwds(self, tlist):
-        split_words = ('FROM', 'STRAIGHT_JOIN$', 'JOIN$', 'AND', 'OR',
+        split_words = ('FROM', 'STRAIGHT_JOIN$', 'JOIN$', 'AND', 'OR', 'ON', 
                        'GROUP', 'ORDER', 'UNION', 'VALUES',
                        'SET', 'BETWEEN', 'EXCEPT')
 
@@ -326,6 +326,7 @@ class ReindentFilter:
                      or unicode(prev).endswith('\r'))):
                 nl = tlist.token_next(token)
             else:
+                self.offset = 6 - len(token.value)
                 nl = self.nl()
                 tlist.insert_before(token, nl)
             token = _next_token(tlist.token_index(nl) + offset)
@@ -351,10 +352,11 @@ class ReindentFilter:
 
     def _process_where(self, tlist):
         token = tlist.token_next_match(0, T.Keyword, 'WHERE')
+        self.offset = 6 - len(token.value)
         tlist.insert_before(token, self.nl())
-        self.indent += 1
+        # self.indent += 1
         self._process_default(tlist)
-        self.indent -= 1
+        # self.indent -= 1
 
     def _process_parenthesis(self, tlist):
         first = tlist.token_next(0)
@@ -538,8 +540,8 @@ class SerializerUnicode:
         res = '\n'.join(line.rstrip() for line in raw.splitlines())
         if add_nl:
             res += '\n'
+        res = res.replace('count(', 'COUNT(').replace('max(', 'MAX(').replace('min(', 'MIN(').replace('sum(', 'SUM(')
         return res
-
 
 def Tokens2Unicode(stream):
     result = ""

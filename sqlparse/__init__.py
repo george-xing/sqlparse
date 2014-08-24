@@ -8,7 +8,6 @@
 
 __version__ = '0.1.11'
 
-
 # Setup namespace
 from sqlparse import engine
 from sqlparse import filters
@@ -16,7 +15,6 @@ from sqlparse import formatter
 
 # Deprecated in 0.1.5. Will be removed in 0.2.0
 from sqlparse.exceptions import SQLParseError
-
 
 def parse(sql, encoding=None):
     """Parse sql and return a list of statements.
