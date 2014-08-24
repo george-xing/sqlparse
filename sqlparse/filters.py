@@ -1,4 +1,3 @@
-import pdb
 # -*- coding: utf-8 -*-
 import re
 
@@ -360,7 +359,6 @@ class ReindentFilter:
         # self.indent -= 1
 
     def _process_parenthesis(self, tlist):
-        pdb.set_trace()
         first = tlist.token_next(0)
         indented = False
         if first and first.ttype in (T.Keyword.DML, T.Keyword.DDL):
