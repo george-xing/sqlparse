@@ -1,3 +1,4 @@
+import pdb
 # -*- coding: utf-8 -*-
 import re
 
@@ -300,7 +301,7 @@ class ReindentFilter:
 
     def _split_kwds(self, tlist):
         split_words = ('FROM', 'STRAIGHT_JOIN$', 'JOIN$', 'AND', 'OR', 'ON', 
-                       'GROUP', 'ORDER', 'UNION', 'VALUES',
+                       'GROUP', 'ORDER', 'UNION', 'VALUES', 'LEFT',
                        'SET', 'BETWEEN', 'EXCEPT')
 
         def _next_token(i):
@@ -310,6 +311,7 @@ class ReindentFilter:
                 t = _next_token(tlist.token_index(t) + 1)
                 if t and t.value.upper() == 'AND':
                     t = _next_token(tlist.token_index(t) + 1)
+
             return t
 
         idx = 0
@@ -326,7 +328,11 @@ class ReindentFilter:
                      or unicode(prev).endswith('\r'))):
                 nl = tlist.token_next(token)
             else:
-                self.offset = 6 - len(token.value) + (2 * self.indent / 3)
+                if token.value.upper() == 'LEFT JOIN':
+                    length = 4
+                else:
+                    length = len(token.value)
+                self.offset = 6 - length + (2 * self.indent / 3)
                 nl = self.nl()
                 tlist.insert_before(token, nl)
             token = _next_token(tlist.token_index(nl) + offset)
