@@ -1,3 +1,4 @@
+import pdb
 # -*- coding: utf-8 -*-
 import re
 
@@ -326,7 +327,7 @@ class ReindentFilter:
                      or unicode(prev).endswith('\r'))):
                 nl = tlist.token_next(token)
             else:
-                self.offset = 6 - len(token.value)
+                self.offset = 6 - len(token.value) + (2 * self.indent / 3)
                 nl = self.nl()
                 tlist.insert_before(token, nl)
             token = _next_token(tlist.token_index(nl) + offset)
@@ -352,25 +353,26 @@ class ReindentFilter:
 
     def _process_where(self, tlist):
         token = tlist.token_next_match(0, T.Keyword, 'WHERE')
-        self.offset = 6 - len(token.value)
+        self.offset = 6 - len(token.value) + (2 * self.indent / 3)
         tlist.insert_before(token, self.nl())
         # self.indent += 1
         self._process_default(tlist)
         # self.indent -= 1
 
     def _process_parenthesis(self, tlist):
+        pdb.set_trace()
         first = tlist.token_next(0)
         indented = False
         if first and first.ttype in (T.Keyword.DML, T.Keyword.DDL):
-            self.indent += 1
-            tlist.tokens.insert(0, self.nl())
+            self.indent += 3
+            tlist.tokens.insert(1, self.nl())
             indented = True
         num_offset = self._get_offset(
             tlist.token_next_match(0, T.Punctuation, '('))
-        self.offset += num_offset
+        self.offset += num_offset + 1
         self._process_default(tlist, stmts=not indented)
         if indented:
-            self.indent -= 1
+            self.indent -= 3
         self.offset -= num_offset
 
     def _process_identifierlist(self, tlist):
